@@ -4,7 +4,7 @@
 - First time occurs 2 hours after game loads with mod enabled and increases level every 2 hours.
 - No in game notifications/options at this time
 
-##Stats Affected
+## Stats Affected
 - Weapon damage: Min: +5% -- Max: +25%
 - Weapon rotationspeed: Min +5% -- Max: +25%
 - Engine forward thrust: Min +5% -- Max: +25%
