@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Last exported: 01.03.2021 15:39:27-->
+<diff>
+<add sel="//wares">
+  <ware id="mod_engine_xenon_1_da" name="{20110,101001}" description="{20110,101002}" shortname="{20110,101001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_enginefuelinjector_t1" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_engine_xenon_2_da" name="{20110,101001}" description="{20110,101002}" shortname="{20110,101001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_enginefuelinjector_t1" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_engine_xenon_3_da" name="{20110,101001}" description="{20110,101002}" shortname="{20110,101001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_enginefuelinjector_t2" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_engine_xenon_4_da" name="{20110,101001}" description="{20110,101002}" shortname="{20110,101001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_enginefuelinjector_t2" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_engine_xenon_5_da" name="{20110,101001}" description="{20110,101002}" shortname="{20110,101001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_enginefuelinjector_t3" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_shield_xenon_1_da" name="{20110,103001}" description="{20110,103002}" shortname="{20110,103001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shieldgeneratorcoil_t1" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_shield_xenon_2_da" name="{20110,103001}" description="{20110,103002}" shortname="{20110,103001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shieldgeneratorcoil_t1" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_shield_xenon_3_da" name="{20110,103001}" description="{20110,103002}" shortname="{20110,103001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shieldgeneratorcoil_t2" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_shield_xenon_4_da" name="{20110,103001}" description="{20110,103002}" shortname="{20110,103001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shieldgeneratorcoil_t2" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_shield_xenon_5_da" name="{20110,103001}" description="{20110,103002}" shortname="{20110,103001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shieldgeneratorcoil_t3" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_1_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t1" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_2_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t1" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_3_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t2" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_4_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t2" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_5_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t3" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_1_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t1" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_2_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t1" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_3_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t2" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_4_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t2" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_5_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t3" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_missile_1_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t1" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_missile_2_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t1" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_missile_3_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t2" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_missile_4_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t2" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_weapon_xenon_missile_5_da" name="{20110,100001}" description="{20110,100002}" shortname="{20110,100001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_weaponchamber_t3" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_eco_1_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t1" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_eco_2_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t1" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_eco_3_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t2" amount="1" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_eco_4_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t2" amount="2" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="mod_ship_xenon_eco_5_da" name="{20110,102001}" description="{20110,102002}" shortname="{20110,102001}" transport="inventory" volume="1" tags="crafting equipmentmod noplayerblueprint">
+    <price min="1" average="1" max="1" />
+    <production time="10" amount="1" method="default" name="{20206,101}">
+      <primary>
+        <ware ware="modpart_shipnanoweave_t3" amount="1" />
+      </primary>
+    </production>
+  </ware>
+</add>
+</diff>
