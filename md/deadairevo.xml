@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="DeadAirEvo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+	<cues>
+		<cue name="Init">
+			<actions>
+				<set_value name="$DAEvoDebug" exact="false"/>
+				<set_value name="$Xenon" exact="faction.xenon"/>
+				<!-- Settings: on/off, interval 2h increments?, max level 1-5? -->
+				<do_if value="(not $DAEvoEnable?)">
+					<set_value name="$DAEvoEnable" exact="true"/>
+				</do_if>
+				<do_if value="(not $DAEvoInterval?)">
+					<set_value name="$DAEvoInterval" exact="120"/>
+				</do_if>
+				<do_if value="(not $DAEvoMaxLevel?)">
+					<set_value name="$DAEvoMaxLevel" exact="5"/>
+				</do_if>
+				<do_if value="(not $DAEvoCurrentLevel?)">
+					<set_value name="$DAEvoCurrentLevel" exact="0"/>
+				</do_if>
+				<do_if value="(not $DAEvoCurrentEQMods?)">
+					<create_list name="$DAEvoCurrentEQMods"/>
+				</do_if>
+				<do_if value="(not $DAEvoCurrentEQMissileMods?)">
+					<set_value name="$DAEvoCurrentEQMissileMods"/>
+				</do_if>
+				<!-- First firing will be after 4 hours in game -->
+				<do_if value="(not $DAEvoLastUpgradeTime?)">
+					<set_value name="$DAEvoLastUpgradeTime" exact="14400"/>
+				</do_if>
+				<set_value name="$DAEvoXenJobsEnable" exact="true"/>
+				<set_value name="$DAEvoMaxXenFleets" exact="10"/>
+				<set_value name="$DAEvoXenFleetSizeSmall" exact="false"/>
+				<set_value name="$DAEvoXenFleetSizeMedium" exact="true"/>
+				<set_value name="$DAEvoXenFleetSizeLarge" exact="false"/>
+				<set_value name="$DAEvoXenFleetSizeName" exact="'daevoxen_medium'"/>
+				<create_group groupname="$DAEvoXenShipGroup"/>
+				<create_group groupname="$DAEvoXenFleetJobNumbers"/>
+				<set_value name="$DAEvoXenShipTempList" exact="[]"/>
+				<set_value name="$DAEvoXenFleetJobs" exact="['xenon_carrier_patrol_daevoxen_small','xenon_destroyer_patrol_daevoxen_small','xenon_carrier_patrol_daevoxen_medium','xenon_destroyer_patrol_daevoxen_medium','xenon_carrier_patrol_daevoxen_large','xenon_destroyer_patrol_daevoxen_large']"/>
+			</actions>
+			<cues>
+				<library name="DebugEnableDisable">
+					<actions>
+						<set_value name="$DAEvoDebug" exact="true"/>
+					</actions>
+				</library>
+				<cue name="Timer" instantiate="true" checkinterval="30min" checktime="player.age + 30min">
+					<conditions>
+						<check_all>
+							<check_value value="$Xenon.isactive"/>
+							<check_value value="$DAEvoEnable"/>
+							<check_value value="$DAEvoCurrentLevel lt $DAEvoMaxLevel"/>
+							<check_value value="player.age ge ($DAEvoLastUpgradeTime + ($DAEvoInterval)min)"/>
+						</check_all>
+					</conditions>
+					<actions>
+						<include_actions ref="DebugEnableDisable"/>
+						<do_if value="$Xenon.isactive">
+							<!-- Xenon is active -->
+							<find_station_by_true_owner name="$XenonStations" faction="$Xenon" space="player.galaxy" canbuildships="true" checkoperational="true" multiple="true" required="true"/>
+							<do_if value="$XenonStations.count" min="1">
+								<!-- Xenon has an important station -->
+								<do_if value="$DAEvoCurrentLevel lt $DAEvoMaxLevel">
+									<include_actions ref="RaiseLevel"/>
+									<include_actions ref="UpdateTimer"/>
+									<do_if value="$DAEvoCurrentLevel gt 0">
+										<include_actions ref="SetEqMods"/>
+									</do_if>
+								</do_if>
+								<do_else>
+									<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon are max level, skipping level up.'.[player.age]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+								</do_else>
+							</do_if>
+							<do_else>
+								<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon have no stations.'.[player.age]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+							</do_else>
+						</do_if>
+						<do_else>
+							<debug_text text="'MOD: DeadAirEvolution -- %1 -- ERROR: Xenon are not active.'.[player.age]" context="false" filter="error"/>
+						</do_else>
+					</actions>
+				</cue>
+				<cue name="JobsTimer" instantiate="true" checkinterval="30min" checktime="player.age + 31min">
+					<conditions>
+						<check_all>
+							<check_value value="$Xenon.isactive"/>
+							<check_value value="$DAEvoXenJobsEnable"/>
+						</check_all>
+					</conditions>
+					<actions>
+						<include_actions ref="DebugEnableDisable"/>
+						<do_if value="$Xenon.isactive">
+							<!-- Xenon is active -->
+							<do_if value="$DAEvoMaxXenFleets and [$DAEvoXenFleetSizeSmall,$DAEvoXenFleetSizeMedium,$DAEvoXenFleetSizeLarge].max and $DAEvoXenFleetSizeName != null">
+								<set_value name="$DAEvoXenCarrierFleetJob" exact="'xenon_carrier_patrol_'"/>
+								<set_value name="$DAEvoXenDestroyerFleetJob" exact="'xenon_destroyer_patrol_'"/>
+								<set_value name="$DAEvoXenCarrierFleetJob" exact="$DAEvoXenFleetSizeName" operation="add"/>
+								<set_value name="$DAEvoXenDestroyerFleetJob" exact="$DAEvoXenFleetSizeName" operation="add"/>
+								<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon job names: %2 -- %3.'.[player.age,$DAEvoXenCarrierFleetJob,$DAEvoXenDestroyerFleetJob]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+								<!-- Find ship counts -->
+								<clear_group group="$DAEvoXenFleetJobNumbers" chance="($DAEvoXenFleetJobNumbers?) * 100"/>
+								<find_ship_by_true_owner groupname="$DAEvoXenFleetJobNumbers" faction="faction.xenon" job="$DAEvoXenFleetJobs" checkoperational="true" space="player.galaxy" multiple="true"/>
+								<include_actions ref="CheckOperationalShips"/>
+								<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon ships active: %2 -- Max Fleets %3'.[player.age,($DAEvoXenFleetJobNumbers.count + $DAEvoXenShipGroup.count + $DAEvoXenShipTempList.count),$DAEvoMaxXenFleets]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+								<!-- Decide if we need more -->
+								<do_if value="($DAEvoXenFleetJobNumbers.count + $DAEvoXenShipGroup.count + $DAEvoXenShipTempList.count) lt $DAEvoMaxXenFleets">
+									<!-- Find if Xenon can actually build ships -->
+									<find_sector name="$LocOwnedSectors" owner="$Xenon" multiple="true" required="true"/>
+									<do_if value="$LocOwnedSectors.count" min="1">
+										<find_station_by_true_owner name="$LocShipyards" space="$LocOwnedSectors" canbuildships="true" faction="$Xenon" shipyard="true" multiple="true" required="true">
+											<match_content class="class.buildmodule" checkoperational="true"/>
+										</find_station_by_true_owner>
+										<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon shipyards: %2'.[player.age,$LocShipyards.count]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+										<do_if value="$LocShipyards.count" min="1">
+											<set_value name="$LocSelectedShipyard" exact="$LocShipyards.random"/>
+											<!-- find closest sector bordering with relation le killmilitary -->
+											<get_factions_by_relation faction="$Xenon" relation="killmilitary" result="$LocXenonEnemies"/>
+											<find_sector name="$LocHostileSectors" space="player.galaxy" owner="$LocXenonEnemies" reachablefrom="$LocSelectedShipyard.sector" sortbygatedistanceto="$LocSelectedShipyard" sortdescending="false" multiple="true"/>
+											<!-- get closest Xenon sector from hostile sectors -->
+											<do_for_each name="$LocHostileSector" in="$LocHostileSectors">
+												<find_sector_in_range name="$LocSectorsInRange" object="$LocHostileSector" maxdistance="1" owner="faction.xenon" multiple="true"/>
+												<do_if value="$LocSectorsInRange.count" min="1">
+													<sort_list list="$LocSectorsInRange" sortbyvalue="loop.element.gatedistance.{$LocSelectedShipyard}"/>
+													<set_value name="$LocSelectedSector" exact="$LocSectorsInRange.{1}"/>
+													<find_gate name="$LocGate" space="$LocSelectedSector" active="true" multiple="false" required="true"/>
+													<do_if value="$LocGate">
+														<debug_text text="'MOD: DeadAirEvolution -- %1 -- Selected Shipyard in: %2 -- Selected Xenon sector: %3'.[player.age,$LocSelectedShipyard.sector.knownname,$LocSelectedSector.knownname]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+														<break/>
+													</do_if>
+												</do_if>
+											</do_for_each>
+											<do_if value="$LocGate">
+												<!-- We have the job, shipyard, gate for zone -->
+												<request_job_ship name="$LocRequestedJobShip" job="[$DAEvoXenCarrierFleetJob,$DAEvoXenDestroyerFleetJob].random" requester="$LocSelectedShipyard" zone="$LocGate.zone"/>
+												<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon ship requested as expected. Macro: %2 (%3)-- Job: %4 -- Sector: %5'.[player.age,$LocRequestedJobShip.macro,$LocRequestedJobShip.idcode,$LocRequestedJobShip.job,@$LocRequestedJobShip.sector]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+												<append_to_list name="$DAEvoXenShipTempList" exact="$LocRequestedJobShip" chance="(not $DAEvoXenShipTempList.indexof.{$LocRequestedJobShip}) * 100"/>
+											</do_if>
+											<do_else>
+												<!-- We do not have the gate for zone -->
+												<request_job_ship name="$LocRequestedJobShip" job="[$DAEvoXenCarrierFleetJob,$DAEvoXenDestroyerFleetJob].random" requester="$LocSelectedShipyard" zone="$LocSelectedShipyard.zone"/>
+												<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon ship requested without gate zone. Falling back to shipyard zone. Macro: %2 (%3)-- Job: %4 -- Sector: %5'.[player.age,$LocRequestedJobShip.macro,$LocRequestedJobShip.idcode,$LocRequestedJobShip.job,@$LocRequestedJobShip.sector]" context="false" filter="error"/>
+												<append_to_list name="$DAEvoXenShipTempList" exact="$LocRequestedJobShip" chance="(not $DAEvoXenShipTempList.indexof.{$LocRequestedJobShip}) * 100"/>
+											</do_else>
+											<remove_value name="$LocSelectedShipyard"/>
+											<remove_value name="$LocXenonEnemies"/>
+											<remove_value name="$LocHostileSectors"/>
+											<remove_value name="$LocHostileSector"/>
+											<remove_value name="$LocSectorsInRange"/>
+											<remove_value name="$LocSelectedSector"/>
+											<remove_value name="$LocGate"/>
+											<remove_value name="$LocRequestedJobShip"/>
+										</do_if>
+										<remove_value name="$LocShipyards"/>
+									</do_if>
+									<do_else>
+										<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon has no sectors.'.[player.age]" context="false" filter="error"/>
+									</do_else>
+								</do_if>
+								<do_else>
+									<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon ships at or above max, skipping activation.'.[player.age]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+								</do_else>
+								<remove_value name="$DAEvoXenCarrierFleetJob"/>
+								<remove_value name="$DAEvoXenDestroyerFleetJob"/>
+								<remove_value name="$DAEvoXenCarrierFleetJobNumbers"/>
+								<remove_value name="$DAEvoXenDestroyerFleetJobNumbers"/>
+								<!-- Signal cue to build more -->
+								<!-- Handle orders? -->
+							</do_if>
+							<do_else>
+								<debug_text text="'MOD: DeadAirEvolution -- %1 -- ERROR: Missing Var for Xenon Jobs. $DAEvoMaxXenFleets %2 -- $DAEvoXenFleetSizeSmall %3 -- $DAEvoXenFleetSizeMedium %4 -- $DAEvoXenFleetSizeLarge %5'.[player.age,$DAEvoMaxXenFleets,$DAEvoXenFleetSizeSmall,$DAEvoXenFleetSizeMedium,$DAEvoXenFleetSizeLarge]" context="false" filter="error"/>
+							</do_else>
+						</do_if>
+						<do_else>
+							<debug_text text="'MOD: DeadAirEvolution -- %1 -- ERROR: Xenon are not active.'.[player.age]" context="false" filter="error"/>
+						</do_else>
+					</actions>
+				</cue>
+				<cue name="UpdateOnLoad" instantiate="true">
+					<conditions>
+						<event_universe_generated/>
+						<check_value value="$DAEvoEnable"/>
+						<check_value value="$DAEvoCurrentLevel gt 0"/>
+						<check_value value="$Xenon.isactive"/>
+					</conditions>
+					<actions>
+						<include_actions ref="DebugEnableDisable"/>
+						<!-- Double check EQ mods -->
+						<include_actions ref="SetEqMods"/>
+					</actions>
+				</cue>
+				<library name="RaiseLevel">
+					<actions>
+						<set_value name="$DAEvoCurrentLevel" exact="1" operation="add"/>
+						<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon level raised to %2'.[player.age,$DAEvoCurrentLevel]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+					</actions>
+				</library>
+				<library name="SetEqMods">
+					<actions>
+						<do_if value="$DAEvoCurrentLevel ge 0">
+							<!-- $DAEvoCurrentEQMods {1}Engine {2}Ship {3}Shield {4}Weapon -->
+							<do_if value="$DAEvoCurrentLevel == 1">
+								<set_value name="$DAEvoCurrentEQMods" exact="[ware.mod_engine_xenon_1_da,ware.mod_ship_xenon_1_da,ware.mod_shield_xenon_1_da,ware.mod_weapon_xenon_1_da]"/>
+								<set_value name="$DAEvoCurrentEQMissileMods" exact="ware.mod_weapon_xenon_missile_1_da"/>
+								<set_value name="$DAEvoCurrentEQEcoMods" exact="ware.mod_ship_xenon_eco_1_da"/>
+							</do_if>
+							<do_elseif value="$DAEvoCurrentLevel == 2">
+								<set_value name="$DAEvoCurrentEQMods" exact="[ware.mod_engine_xenon_2_da,ware.mod_ship_xenon_2_da,ware.mod_shield_xenon_2_da,ware.mod_weapon_xenon_2_da]"/>
+								<set_value name="$DAEvoCurrentEQMissileMods" exact="ware.mod_weapon_xenon_missile_2_da"/>
+								<set_value name="$DAEvoCurrentEQEcoMods" exact="ware.mod_ship_xenon_eco_2_da"/>
+							</do_elseif>
+							<do_elseif value="$DAEvoCurrentLevel == 3">
+								<set_value name="$DAEvoCurrentEQMods" exact="[ware.mod_engine_xenon_3_da,ware.mod_ship_xenon_3_da,ware.mod_shield_xenon_3_da,ware.mod_weapon_xenon_3_da]"/>
+								<set_value name="$DAEvoCurrentEQMissileMods" exact="ware.mod_weapon_xenon_missile_3_da"/>
+								<set_value name="$DAEvoCurrentEQEcoMods" exact="ware.mod_ship_xenon_eco_3_da"/>
+							</do_elseif>
+							<do_elseif value="$DAEvoCurrentLevel == 4">
+								<set_value name="$DAEvoCurrentEQMods" exact="[ware.mod_engine_xenon_4_da,ware.mod_ship_xenon_4_da,ware.mod_shield_xenon_4_da,ware.mod_weapon_xenon_4_da]"/>
+								<set_value name="$DAEvoCurrentEQMissileMods" exact="ware.mod_weapon_xenon_missile_4_da"/>
+								<set_value name="$DAEvoCurrentEQEcoMods" exact="ware.mod_ship_xenon_eco_4_da"/>
+							</do_elseif>
+							<do_elseif value="$DAEvoCurrentLevel == 5">
+								<set_value name="$DAEvoCurrentEQMods" exact="[ware.mod_engine_xenon_5_da,ware.mod_ship_xenon_5_da,ware.mod_shield_xenon_5_da,ware.mod_weapon_xenon_5_da]"/>
+								<set_value name="$DAEvoCurrentEQMissileMods" exact="ware.mod_weapon_xenon_missile_5_da"/>
+								<set_value name="$DAEvoCurrentEQEcoMods" exact="ware.mod_ship_xenon_eco_5_da"/>
+							</do_elseif>
+						</do_if>
+						<do_else>
+							<debug_text text="'MOD: DeadAirEvolution -- %1 -- ERROR: $DAEvoCurrentLevel %2.'.[player.age,$DAEvoCurrentLevel]" context="false" filter="error"/>
+						</do_else>
+					</actions>
+				</library>
+				<library name="UpdateTimer">
+					<actions>
+						<do_if value="$DAEvoEnable">
+							<set_value name="$DAEvoLastUpgradeTime" exact="player.age"/>
+						</do_if>
+					</actions>
+				</library>
+				<library name="CheckOperationalShips">
+					<actions>
+						<!-- Check if ships in list are in group yet -->
+						<!-- $DAEvoXenFleetJobNumbers should contain operational -->
+						<!-- $DAEvoXenShipGroup should contain all operational -->
+						<do_if value="$DAEvoXenFleetJobNumbers.count or $DAEvoXenShipTempList.count or $DAEvoXenShipGroup.count">
+							<do_if value="$DAEvoXenShipTempList.count">
+								<!-- These are ships ordered, but may not be operational -->
+								<do_for_each name="$LocXShip" in="$DAEvoXenShipTempList" reverse="true">
+									<do_if value="(not $DAEvoXenShipGroup.indexof.{$LocXShip}) and ($DAEvoXenFleetJobNumbers.indexof.{$LocXShip})">
+										<add_to_group groupname="$DAEvoXenShipGroup" object="$LocXShip"/>
+										<debug_text text="'MOD: DeadAirEvolution -- %1 -- CheckOperationalShips: Add to $DAEvoXenShipGroup from $DAEvoXenShipTempList -- Ship: %2 (%3) -- Job: %4 -- Location: %5'.[player.age,$LocXShip.macro,$LocXShip.idcode,$LocXShip.job,$LocXShip.sector.knownname]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+										<remove_from_list name="$DAEvoXenShipTempList" exact="$LocXShip"/>
+										<remove_from_group group="$DAEvoXenFleetJobNumbers" object="$LocXShip"/>
+									</do_if>
+									<do_elseif value="($DAEvoXenShipGroup.indexof.{$LocXShip}) or ($DAEvoXenFleetJobNumbers.indexof.{$LocXShip})">
+										<debug_text text="'MOD: DeadAirEvolution -- %1 -- CheckOperationalShips: Removing operational ship from temp list -- Ship: %2 (%3) -- Job: %4 -- Location: %5'.[player.age,$LocXShip.macro,$LocXShip.idcode,$LocXShip.job,$LocXShip.sector.knownname]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+										<remove_from_list name="$DAEvoXenShipTempList" exact="$LocXShip"/>
+									</do_elseif>
+									<do_else>
+										<!-- this ship should not be active in this case -->
+									</do_else>
+								</do_for_each>
+								<remove_value name="$LocXShip"/>
+							</do_if>
+							<do_if value="$DAEvoXenFleetJobNumbers.count">
+								<!-- These are ships found in the find_ships search -->
+								<do_for_each name="$LocXShip" in="$DAEvoXenFleetJobNumbers" reverse="true">
+									<do_if value="$DAEvoXenShipGroup.indexof.{$LocXShip}">
+										<debug_text text="'MOD: DeadAirEvolution -- %1 -- CheckOperationalShips: Remove $DAEvoXenShipGroup from $DAEvoXenFleetJobNumbers -- Ship: %2 (%3) -- Job: %4 -- Location: %5 -- Subordinates: %6'.[player.age,$LocXShip.macro,$LocXShip.idcode,$LocXShip.job,$LocXShip.sector.knownname,$LocXShip.subordinates.count]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+										<remove_from_group group="$DAEvoXenFleetJobNumbers" object="$LocXShip"/>
+									</do_if>
+									<do_elseif value="not $DAEvoXenShipGroup.indexof.{$LocXShip}">
+										<add_to_group groupname="$DAEvoXenShipGroup" object="$LocXShip"/>
+										<debug_text text="'MOD: DeadAirEvolution -- %1 -- CheckOperationalShips: Add to $DAEvoXenShipGroup -- Ship: %2 (%3) -- Job: %4 -- Location: %5 -- Subordinates: %6'.[player.age,$LocXShip.macro,$LocXShip.idcode,$LocXShip.job,$LocXShip.sector.knownname,$LocXShip.subordinates.count]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+										<remove_from_group group="$DAEvoXenFleetJobNumbers" object="$LocXShip"/>
+									</do_elseif>
+									<do_else>
+										<!-- We should never reach here -->
+									</do_else>
+								</do_for_each>
+								<remove_value name="$LocXShip"/>
+							</do_if>
+							<do_if value="$DAEvoXenShipGroup.count">
+								<!-- These are ships found by event_job_ship_activated -->
+								<do_for_each name="$LocXShip" in="$DAEvoXenShipGroup">
+									<do_if value="$DAEvoXenShipTempList.indexof.{$LocXShip}">
+										<debug_text text="'MOD: DeadAirEvolution -- %1 -- CheckOperationalShips: Remove $DAEvoXenShipGroup from $DAEvoXenShipTempList -- Ship: %2 (%3) -- Job: %4 -- Location: %5'.[player.age,$LocXShip.macro,$LocXShip.idcode,$LocXShip.job,$LocXShip.sector.knownname]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+										<remove_from_list name="$DAEvoXenShipTempList" exact="$LocXShip"/>
+									</do_if>
+									<do_if value="$DAEvoXenFleetJobNumbers.indexof.{$LocXShip}">
+										<debug_text text="'MOD: DeadAirEvolution -- %1 -- CheckOperationalShips: Remove $DAEvoXenShipGroup from $DAEvoXenFleetJobNumbers -- Ship: %2 (%3) -- Job: %4 -- Location: %5'.[player.age,$LocXShip.macro,$LocXShip.idcode,$LocXShip.job,$LocXShip.sector.knownname]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+										<remove_from_group group="$DAEvoXenFleetJobNumbers" object="$LocXShip"/>
+									</do_if>
+								</do_for_each>
+								<remove_value name="$LocXShip"/>
+								<!-- They never seem to get subordinates, force restock -->
+								<do_for_each name="$LocYShip" in="$DAEvoXenShipGroup">
+									<!-- Only force restock subordinates if we are in friendly space -->
+									<do_if value="$LocYShip.owner == $LocYShip.sector.owner">
+										<get_subordinate_jobs jobs="$LocSubordinateJobs" amount="$LocSubordinateAmounts" commander="$LocYShip"/>
+										<do_if value="not $LocSubordinateJobs.count">
+											<!-- Already has subordinates -->
+										</do_if>
+										<do_elseif value="$LocSubordinateJobs.count" min="1">
+											<set_value name="$LocOrders" exact="$LocYShip.orders"/>
+											<set_value name="$LocNeedToRestockNow" exact="true"/>
+											<set_value name="$LocNeedToRestockLater" exact="true"/>
+											<append_to_list name="$LocOrders" exact="$LocYShip.defaultorder" chance="$LocYShip.defaultorder? * 100"/>
+											<do_for_each name="$LocOrder" in="$LocOrders">
+												<do_if value="['Equip','Repair','RestockSubordinates'].indexof.{$LocOrder.id}">
+													<set_value name="$LocNeedToRestockNow" exact="false"/>
+													<set_value name="$LocNeedToRestockLater" exact="false"/>
+													<break/>
+												</do_if>
+												<do_elseif value="['Attack','Flee','DockAt','DockAndWait','Undock'].indexof.{$LocOrder.id}">
+													<set_value name="$LocNeedToRestockNow" exact="false"/>
+												</do_elseif>
+											</do_for_each>
+											<do_if value="$LocNeedToRestockNow">
+												<create_order object="$LocYShip" id="'RestockSubordinates'" immediate="true"/>
+												<debug_text text="'MOD: DeadAirEvolution -- %1 -- CheckOperationalShips: Force restock now -- Ship: %2 (%3) -- Job: %4 -- Location: %5 -- Subordinates: %6'.[player.age,$LocYShip.macro,$LocYShip.idcode,$LocYShip.job,$LocYShip.sector.knownname,$LocYShip.subordinates.count]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+											</do_if>
+											<do_elseif value="$LocNeedToRestockLater">
+												<create_order object="$LocYShip" id="'RestockSubordinates'"/>
+												<debug_text text="'MOD: DeadAirEvolution -- %1 -- CheckOperationalShips: Force restock later -- Ship: %2 (%3) -- Job: %4 -- Location: %5 -- Subordinates: %6'.[player.age,$LocYShip.macro,$LocYShip.idcode,$LocYShip.job,$LocYShip.sector.knownname,$LocYShip.subordinates.count]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+											</do_elseif>
+											<remove_value name="$LocOrders"/>
+											<remove_value name="$LocOrder"/>
+											<remove_value name="$LocNeedToRestockNow"/>
+											<remove_value name="$LocNeedToRestockLater"/>
+										</do_elseif>
+										<remove_value name="$LocSubordinateJobs"/>
+										<remove_value name="$LocSubordinateAmounts"/>
+									</do_if>
+								</do_for_each>
+								<remove_value name="$LocYShip"/>
+							</do_if>
+							<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon ship count by variable -- $DAEvoXenShipGroup.count: %2 -- $DAEvoXenFleetJobNumbers.count: %3 -- $DAEvoXenShipTempList.count: %4'.[player.age,$DAEvoXenShipGroup.count,$DAEvoXenFleetJobNumbers.count,$DAEvoXenShipTempList.count]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+						</do_if>
+					</actions>
+				</library>
+				<cue name="UpgradeShip" instantiate="true">
+					<conditions>
+						<event_job_ship_activated/>
+						<check_value value="event.param.trueowner == $Xenon"/>
+						<check_value value="$DAEvoEnable"/>
+						<check_value value="$DAEvoCurrentLevel gt 0"/>
+						<check_value value="$Xenon.isactive"/>
+						<check_value value="$DAEvoCurrentEQMods.count == 4"/>
+					</conditions>
+					<actions>
+						<include_actions ref="DebugEnableDisable"/>
+						<!-- Using DAFill Code -->
+						<set_value name="$WeaponGroupTags" exact="[]"/>
+						<set_value name="$WeaponMacros" exact="[]"/>
+						<!-- Apply EQ mods -->
+						<set_value name="$DebugString" exact="'Ship: ' + event.param.macro"/>
+						<set_value name="$DebugString" exact="' Mods: '" operation="add"/>
+						<!-- Engine mods work with simple method -->
+						<add_equipment_mods object="event.param">
+							<engine ware="$DAEvoCurrentEQMods.{1}"/>
+						</add_equipment_mods>
+						<set_value name="$DebugString" exact="$DAEvoCurrentEQMods.{1}.id" operation="add"/>
+						<!-- Ship mods work with simple method -->
+						<do_if value="(event.param.primarypurpose == purpose.trade) or (event.param.primarypurpose == purpose.mine)">
+							<add_equipment_mods object="event.param">
+								<ship ware="$DAEvoCurrentEQEcoMods"/>
+							</add_equipment_mods>
+							<set_value name="$DebugString" exact="', ' + $DAEvoCurrentEQEcoMods.id" operation="add"/>
+						</do_if>
+						<do_else>
+							<add_equipment_mods object="event.param">
+								<ship ware="$DAEvoCurrentEQMods.{2}"/>
+							</add_equipment_mods>
+							<set_value name="$DebugString" exact="', ' + $DAEvoCurrentEQMods.{2}.id" operation="add"/>
+						</do_else>
+						<!-- Shield mods mostly work with simple method -->
+						<add_equipment_mods object="event.param">
+							<shield ware="$DAEvoCurrentEQMods.{3}"/>
+						</add_equipment_mods>
+						<set_value name="$DebugString" exact="', ' + $DAEvoCurrentEQMods.{3}.id" operation="add"/>
+						<!-- Have to use complicated method for weapons/turrets on L/XL-->
+						<do_for_each in="event.param.weapons.all.list" name="$Weapon">
+							<do_if value="$Weapon.grouptag and (not $WeaponGroupTags.indexof.{$Weapon.grouptag})">
+								<do_if value="$Weapon.isclass.[class.missileturret,class.missilelauncher]">
+									<add_equipment_mods object="event.param">
+										<weapon ware="$DAEvoCurrentEQMissileMods" context="'..'" group="$Weapon.grouptag"/>
+									</add_equipment_mods>
+									<append_to_list name="$WeaponGroupTags" exact="$Weapon.grouptag"/>
+									<set_value name="$DebugString" exact="', ' + $DAEvoCurrentEQMissileMods.id + '/' + $Weapon.grouptag" operation="add"/>
+								</do_if>
+								<do_else>
+									<add_equipment_mods object="event.param">
+										<weapon ware="$DAEvoCurrentEQMods.{4}" context="'..'" group="$Weapon.grouptag"/>
+									</add_equipment_mods>
+									<append_to_list name="$WeaponGroupTags" exact="$Weapon.grouptag"/>
+									<set_value name="$DebugString" exact="', ' + $DAEvoCurrentEQMods.{4}.id + '/' + $Weapon.grouptag" operation="add"/>
+								</do_else>
+							</do_if>
+							<do_elseif value="($Weapon.macro) and (not $WeaponMacros.indexof.{$Weapon.macro}) and (not $WeaponGroupTags.indexof.{$Weapon.grouptag})">
+								<do_if value="$Weapon.isclass.[class.missileturret,class.missilelauncher]">
+									<add_equipment_mods object="event.param">
+										<weapon ware="$DAEvoCurrentEQMissileMods" macro="$Weapon.macro"/>
+									</add_equipment_mods>
+									<append_to_list name="$WeaponMacros" exact="$Weapon.macro"/>
+									<set_value name="$DebugString" exact="', ' + $DAEvoCurrentEQMissileMods.id + '/' + $Weapon.macro" operation="add"/>
+								</do_if>
+								<do_elseif value="not (@$Weapon.hasweaponmod == null)">
+									<add_equipment_mods object="event.param">
+										<weapon ware="$DAEvoCurrentEQMods.{4}" macro="$Weapon.macro"/>
+									</add_equipment_mods>
+									<append_to_list name="$WeaponMacros" exact="$Weapon.macro"/>
+									<set_value name="$DebugString" exact="', ' + $DAEvoCurrentEQMods.{4}.id + '/' + $Weapon.macro" operation="add"/>
+								</do_elseif>
+							</do_elseif>
+						</do_for_each>
+						<set_value name="$DebugString" exact="'.'" operation="add"/>
+						<debug_text text="'MOD: DeadAirEvolution -- %1 -- Added EQ Mods -- %2'.[player.age,$DebugString]" context="false" filter="scripts" chance="$DAEvoDebug * 5"/>
+						<remove_value name="$DebugString"/>
+						<remove_value name="$Weapon"/>
+						<remove_value name="$WeaponGroupTags"/>
+						<remove_value name="$WeaponMacros"/>
+					</actions>
+				</cue>
+				<cue name="TrackAddedShips" instantiate="true">
+					<conditions>
+						<check_all>
+							<event_job_ship_activated/>
+							<check_any>
+								<check_value value="event.param.job == 'xenon_carrier_patrol_daevoxen_small'"/>
+								<check_value value="event.param.job == 'xenon_destroyer_patrol_daevoxen_small'"/>
+								<check_value value="event.param.job == 'xenon_carrier_patrol_daevoxen_medium'"/>
+								<check_value value="event.param.job == 'xenon_destroyer_patrol_daevoxen_medium'"/>
+								<check_value value="event.param.job == 'xenon_carrier_patrol_daevoxen_large'"/>
+								<check_value value="event.param.job == 'xenon_destroyer_patrol_daevoxen_large'"/>
+							</check_any>
+						</check_all>
+					</conditions>
+					<actions>
+						<add_to_group groupname="$DAEvoXenShipGroup" object="event.param"/>
+						<include_actions ref="CheckOperationalShips"/>
+						<do_if value="$DAEvoDebug">
+							<debug_text text="'MOD: DeadAirEvolution -- %1 -- Xenon ship activated. Ship: %2 (%3) -- Job: %4 -- Location: %5 -- Total Ships: %6'.[player.age,event.param.macro,event.param.idcode,event.param.job,event.param.sector.knownname,$DAEvoXenShipGroup.count]" context="false" filter="scripts"/>
+						</do_if>
+					</actions>
+				</cue>
+				<!-- Menu -->
+				<cue name="Register_Options_Menu" instantiate="true">
+					<conditions>
+						<event_cue_signalled cue="md.Simple_Menu_API.Reloaded"/>
+					</conditions>
+					<actions>
+						<include_actions ref="DebugEnableDisable"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Register_Options_Menu" param="table[$id = 'daeoptions_menu', $columns = 8, $title   = {4816310,100}, $onOpen  = Main_Menu ]"/>
+					</actions>
+				</cue>
+				<cue name="Main_Menu" instantiate="true">
+					<conditions>
+						<event_cue_signalled/>
+					</conditions>
+					<actions>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Add_Row"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
+								$col = 1,
+								$colSpan = 6,
+								$text = {4816310,200},
+								$mouseOverText= {4816310,201},
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Button" param="table[
+								$col = 7, 
+								$colSpan = 2,
+								$text = table[
+								  $text   =  if $DAEvoEnable == true then {1001,4825} else {1001,8942}, 
+								  $color  = 'Helper.color.green',
+								  $halign = 'center',
+								],
+								$onClick = DAEvoEnableCue,
+								$onRightClick = DAEvoEnableCue,
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Add_Row"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
+								$col = 1,
+								$colSpan = 4,
+								$text = {4816310,202},
+								$mouseOverText= {4816310,203},
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Slider" param="table[
+								$col = 5,
+								$colSpan = 4,
+								$onSliderCellConfirm = DAEvoIntervalCue,
+								$min = 0,
+								$minSelect = 30,
+								$max = 330,
+								$maxSelect = 300,
+								$exceedMaxValue = false,
+								$start = $DAEvoInterval,
+								$step = 30,
+								$suffix = 'min',
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Add_Row"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
+								$col=1,
+								$colSpan=4,
+								$text = {4816310,204},
+								$mouseOverText= {4816310,205},
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
+								$col=5,
+								$colSpan=4,
+								$text = '%s: %s / %s: %s'.[{1001,7899},$DAEvoCurrentLevel,{1001,19},$DAEvoMaxLevel],
+								$mouseOverText= {4816310,205},
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Add_Row"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
+								$col = 1,
+								$colSpan = 6,
+								$text = {4816310,206},
+								$mouseOverText= {4816310,207},
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Button" param="table[
+								$col = 7, 
+								$colSpan = 2,
+								$text = table[
+								  $text   =  if $DAEvoXenJobsEnable == true then {1001,4825} else {1001,8942}, 
+								  $color  = 'Helper.color.green',
+								  $halign = 'center',
+								],
+								$onClick = DAEvoXenJobsEnableCue,
+								$onRightClick = DAEvoXenJobsEnableCue,
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Add_Row"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
+								$col = 1,
+								$colSpan = 4,
+								$text = {4816310,208},
+								$mouseOverText= {4816310,209},
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Slider" param="table[
+								$col = 5,
+								$colSpan = 4,
+								$onSliderCellConfirm = DAEvoMaxXenFleetsCue,
+								$min = 0,
+								$minSelect = 5,
+								$max = 100,
+								$maxSelect = 100,
+								$exceedMaxValue = false,
+								$start = $DAEvoMaxXenFleets,
+								$step = 5,
+								$suffix = ' fleet(s)',
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Add_Row"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
+								$col = 1,
+								$colSpan = 2,
+								$text = {4816310,210},
+								$mouseOverText= {4816310,211},
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Button" param="table[
+								$col = 3, 
+								$colSpan = 2,
+								$text = table[
+								  $text   = {4816310,212}, 
+								  $color  = if $DAEvoXenFleetSizeSmall then 'Helper.color.green' else 'Helper.color.red',
+								  $halign = 'center',
+								],
+								$mouseOverText= {4816310,213},
+								$onClick = DAEvoXenFleetSizeSmallCue,
+								$onRightClick = DAEvoXenFleetSizeSmallCue,
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Button" param="table[
+								$col = 5, 
+								$colSpan = 2,
+								$text = table[
+								  $text   = {4816310,214}, 
+								  $color  = if $DAEvoXenFleetSizeMedium then 'Helper.color.green' else 'Helper.color.red',
+								  $halign = 'center',
+								],
+								$mouseOverText= {4816310,215},
+								$onClick = DAEvoXenFleetSizeMediumCue,
+								$onRightClick = DAEvoXenFleetSizeMediumCue,
+							]"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Make_Button" param="table[
+								$col = 7, 
+								$colSpan = 2,
+								$text = table[
+								  $text   = {4816310,216}, 
+								  $color  = if $DAEvoXenFleetSizeLarge then 'Helper.color.green' else 'Helper.color.red',
+								  $halign = 'center',
+								],
+								$mouseOverText= {4816310,217},
+								$onClick = DAEvoXenFleetSizeLargeCue,
+								$onRightClick = DAEvoXenFleetSizeLargeCue,
+							]"/>
+					</actions>
+				</cue>
+				<cue name="DAEvoEnableCue" instantiate="true">
+					<conditions>
+						<event_cue_signalled/>
+					</conditions>
+					<actions>
+						<set_value name="$DAEvoEnable" exact="if $DAEvoEnable == true then false else true"/>
+						<debug_text text="'MOD: DeadAirEvolution -- %1 -- Updated $DAEvoEnable to %2'.[player.age,$DAEvoEnable]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Refresh_Menu"/>
+					</actions>
+				</cue>
+				<cue name="DAEvoIntervalCue" instantiate="true">
+					<conditions>
+						<event_cue_signalled/>
+					</conditions>
+					<actions>
+						<set_value name="$DAEvoInterval" exact="event.param.$value"/>
+						<debug_text text="'MOD: DeadAirEvolution -- %1 -- Updated $DAEvoInterval to %2'.[player.age,$DAEvoInterval]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+					</actions>
+				</cue>
+				<cue name="DAEvoXenJobsEnableCue" instantiate="true">
+					<conditions>
+						<event_cue_signalled/>
+					</conditions>
+					<actions>
+						<set_value name="$DAEvoXenJobsEnable" exact="if $DAEvoXenJobsEnable == true then false else true"/>
+						<debug_text text="'MOD: DeadAirEvolution -- %1 -- Updated $DAEvoXenJobsEnable to %2'.[player.age,$DAEvoXenJobsEnable]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Refresh_Menu"/>
+					</actions>
+				</cue>
+				<cue name="DAEvoMaxXenFleetsCue" instantiate="true">
+					<conditions>
+						<event_cue_signalled/>
+					</conditions>
+					<actions>
+						<set_value name="$DAEvoMaxXenFleets" exact="event.param.$value"/>
+						<debug_text text="'MOD: DeadAirEvolution -- %1 -- Updated $DAEvoMaxXenFleets to %2'.[player.age,$DAEvoMaxXenFleets]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+					</actions>
+				</cue>
+				<cue name="DAEvoXenFleetSizeSmallCue" instantiate="true">
+					<conditions>
+						<event_cue_signalled/>
+					</conditions>
+					<actions>
+						<set_value name="$DAEvoXenFleetSizeSmall" exact="true"/>
+						<set_value name="$DAEvoXenFleetSizeMedium" exact="false"/>
+						<set_value name="$DAEvoXenFleetSizeLarge" exact="false"/>
+						<set_value name="$DAEvoXenFleetSizeName" exact="'daevoxen_small'"/>
+						<debug_text text="'MOD: DeadAirEvolution -- %1 -- Updated $DAEvoXenFleetSizeSmall to %2'.[player.age,$DAEvoXenFleetSizeSmall]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Refresh_Menu"/>
+					</actions>
+				</cue>
+				<cue name="DAEvoXenFleetSizeMediumCue" instantiate="true">
+					<conditions>
+						<event_cue_signalled/>
+					</conditions>
+					<actions>
+						<set_value name="$DAEvoXenFleetSizeSmall" exact="false"/>
+						<set_value name="$DAEvoXenFleetSizeMedium" exact="true"/>
+						<set_value name="$DAEvoXenFleetSizeLarge" exact="false"/>
+						<set_value name="$DAEvoXenFleetSizeName" exact="'daevoxen_medium'"/>
+						<debug_text text="'MOD: DeadAirEvolution -- %1 -- Updated $DAEvoXenFleetSizeMedium to %2'.[player.age,$DAEvoXenFleetSizeMedium]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Refresh_Menu"/>
+					</actions>
+				</cue>
+				<cue name="DAEvoXenFleetSizeLargeCue" instantiate="true">
+					<conditions>
+						<event_cue_signalled/>
+					</conditions>
+					<actions>
+						<set_value name="$DAEvoXenFleetSizeSmall" exact="false"/>
+						<set_value name="$DAEvoXenFleetSizeMedium" exact="false"/>
+						<set_value name="$DAEvoXenFleetSizeLarge" exact="true"/>
+						<set_value name="$DAEvoXenFleetSizeName" exact="'daevoxen_large'"/>
+						<debug_text text="'MOD: DeadAirEvolution -- %1 -- Updated $DAEvoXenFleetSizeLarge to %2'.[player.age,$DAEvoXenFleetSizeLarge]" context="false" filter="scripts" chance="$DAEvoDebug * 100"/>
+						<signal_cue_instantly cue="md.Simple_Menu_API.Refresh_Menu"/>
+					</actions>
+				</cue>
+			</cues>
+		</cue>
+	</cues>
+</mdscript>

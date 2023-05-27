@@ -1,0 +1,284 @@
+<?xml version='1.0' encoding='utf-8'?>
+<diff>
+<add sel="/jobs">
+	<!-- Small Fleets -->
+	<job id="xenon_carrier_patrol_daevoxen_small" name="{4816310,301}" startactive="false">
+		<modifiers commandeerable="true"/>
+		<orders>
+			<order order="Patrol" default="true">
+				<param name="range" value="class.zone"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[factionlogic, military, carrier, daevoxen_small]" size="ship_xl"/>
+		<quota galaxy="20" maxgalaxy="20" sector="2" zone="1"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro" faction="xenon" relation="self" comparison="exact" matchextension="false"/>
+		<environment buildatshipyard="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, carrier]" size="ship_xl"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+		<subordinates>
+			<subordinate job="xenon_destroyer_escort_daevoxen_small" assignment="attack" group="1"/>
+			<subordinate job="xenon_frigate_escort_daevoxen_small" assignment="attack" group="2"/>
+			<subordinate job="xenon_fighter_escort_daevoxen_small" assignment="attack" group="3"/>
+		</subordinates>
+	</job>
+	<job id="xenon_destroyer_patrol_daevoxen_small" name="{4816310,301}" startactive="false">
+		<modifiers commandeerable="true"/>
+		<orders>
+			<order order="Patrol" default="true">
+				<param name="range" value="class.zone"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[factionlogic, military, destroyer, daevoxen_small]" size="ship_xl"/>
+		<quota galaxy="20" maxgalaxy="20" sector="2" zone="1"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro" faction="xenon" relation="self" comparison="exact" matchextension="false"/>
+		<environment buildatshipyard="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, destroyer]" size="ship_xl"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+		<subordinates>
+			<subordinate job="xenon_destroyer_escort_daevoxen_small" assignment="attack" group="1"/>
+			<subordinate job="xenon_frigate_escort_daevoxen_small" assignment="attack" group="2"/>
+			<subordinate job="xenon_fighter_escort_daevoxen_small" assignment="attack" group="3"/>
+		</subordinates>
+	</job>
+	<job id="xenon_destroyer_escort_daevoxen_small" name="{4816310,302}" startactive="false">
+		<orders>
+			<order order="Escort" default="true">
+				<param name="formation" value="formationshape.invvshape"/>
+				<param name="overrideformationskill" value="true"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[military, destroyer]" size="ship_xl"/>
+		<quota wing="1"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro"/>
+		<environment buildatshipyard="true"/>
+		<modifiers subordinate="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, destroyer]" size="ship_xl"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+	</job>
+	<job id="xenon_frigate_escort_daevoxen_small" name="{4816310,302}" startactive="false">
+		<orders>
+			<order order="Escort" default="true">
+				<param name="formation" value="formationshape.dartvertical"/>
+				<param name="overrideformationskill" value="true"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[military]" size="ship_m"/>
+		<quota wing="3"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro"/>
+		<environment buildatshipyard="true"/>
+		<modifiers subordinate="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, medium]" size="ship_m"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+	</job>
+	<job id="xenon_fighter_escort_daevoxen_small" name="{4816310,302}" startactive="false">
+		<orders>
+			<order order="Escort" default="true">
+				<param name="overrideformationskill" value="true"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[military, fighter]" size="ship_s"/>
+		<quota wing="6"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro"/>
+		<environment buildatshipyard="true"/>
+		<modifiers subordinate="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, fighter, selection]" size="ship_s"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+	</job>
+	<!-- Medium Fleets -->
+	<job id="xenon_carrier_patrol_daevoxen_medium" name="{4816310,301}" startactive="false">
+		<modifiers commandeerable="true"/>
+		<orders>
+			<order order="Patrol" default="true">
+				<param name="range" value="class.zone"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[factionlogic, military, carrier, daevoxen_medium]" size="ship_xl"/>
+		<quota galaxy="20" maxgalaxy="20" sector="2" zone="1"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro" faction="xenon" relation="self" comparison="exact" matchextension="false"/>
+		<environment buildatshipyard="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, carrier]" size="ship_xl"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+		<subordinates>
+			<subordinate job="xenon_destroyer_escort_daevoxen_medium" assignment="attack" group="1"/>
+			<subordinate job="xenon_frigate_escort_daevoxen_medium" assignment="attack" group="2"/>
+			<subordinate job="xenon_fighter_escort_daevoxen_medium" assignment="attack" group="3"/>
+		</subordinates>
+	</job>
+	<job id="xenon_destroyer_patrol_daevoxen_medium" name="{4816310,301}" startactive="false">
+		<modifiers commandeerable="true"/>
+		<orders>
+			<order order="Patrol" default="true">
+				<param name="range" value="class.zone"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[factionlogic, military, destroyer, daevoxen_medium]" size="ship_xl"/>
+		<quota galaxy="20" maxgalaxy="20" sector="2" zone="1"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro" faction="xenon" relation="self" comparison="exact" matchextension="false"/>
+		<environment buildatshipyard="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, destroyer]" size="ship_xl"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+		<subordinates>
+			<subordinate job="xenon_destroyer_escort_daevoxen_medium" assignment="attack" group="1"/>
+			<subordinate job="xenon_frigate_escort_daevoxen_medium" assignment="attack" group="2"/>
+			<subordinate job="xenon_fighter_escort_daevoxen_medium" assignment="attack" group="3"/>
+		</subordinates>
+	</job>
+	<job id="xenon_destroyer_escort_daevoxen_medium" name="{4816310,302}" startactive="false">
+		<orders>
+			<order order="Escort" default="true">
+				<param name="formation" value="formationshape.invvshape"/>
+				<param name="overrideformationskill" value="true"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[military, destroyer]" size="ship_xl"/>
+		<quota wing="3"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro"/>
+		<environment buildatshipyard="true"/>
+		<modifiers subordinate="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, destroyer]" size="ship_xl"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+	</job>
+	<job id="xenon_frigate_escort_daevoxen_medium" name="{4816310,302}" startactive="false">
+		<orders>
+			<order order="Escort" default="true">
+				<param name="formation" value="formationshape.dartvertical"/>
+				<param name="overrideformationskill" value="true"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[military]" size="ship_m"/>
+		<quota wing="9"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro"/>
+		<environment buildatshipyard="true"/>
+		<modifiers subordinate="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, medium]" size="ship_m"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+	</job>
+	<job id="xenon_fighter_escort_daevoxen_medium" name="{4816310,302}" startactive="false">
+		<orders>
+			<order order="Escort" default="true">
+				<param name="overrideformationskill" value="true"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[military, fighter]" size="ship_s"/>
+		<quota wing="18"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro"/>
+		<environment buildatshipyard="true"/>
+		<modifiers subordinate="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, fighter, selection]" size="ship_s"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+	</job>
+	<!-- Large Fleets -->
+	<job id="xenon_carrier_patrol_daevoxen_large" name="{4816310,301}" startactive="false">
+		<modifiers commandeerable="true"/>
+		<orders>
+			<order order="Patrol" default="true">
+				<param name="range" value="class.zone"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[factionlogic, military, carrier, daevoxen_large]" size="ship_xl"/>
+		<quota galaxy="20" maxgalaxy="20" sector="2" zone="1"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro" faction="xenon" relation="self" comparison="exact" matchextension="false"/>
+		<environment buildatshipyard="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, carrier]" size="ship_xl"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+		<subordinates>
+			<subordinate job="xenon_destroyer_escort_daevoxen_large" assignment="attack" group="1"/>
+			<subordinate job="xenon_frigate_escort_daevoxen_large" assignment="attack" group="2"/>
+			<subordinate job="xenon_fighter_escort_daevoxen_large" assignment="attack" group="3"/>
+		</subordinates>
+	</job>
+	<job id="xenon_destroyer_patrol_daevoxen_large" name="{4816310,301}" startactive="false">
+		<modifiers commandeerable="true"/>
+		<orders>
+			<order order="Patrol" default="true">
+				<param name="range" value="class.zone"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[factionlogic, military, destroyer, daevoxen_large]" size="ship_xl"/>
+		<quota galaxy="20" maxgalaxy="20" sector="2" zone="1"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro" faction="xenon" relation="self" comparison="exact" matchextension="false"/>
+		<environment buildatshipyard="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, destroyer]" size="ship_xl"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+		<subordinates>
+			<subordinate job="xenon_destroyer_escort_daevoxen_large" assignment="attack" group="1"/>
+			<subordinate job="xenon_frigate_escort_daevoxen_large" assignment="attack" group="2"/>
+			<subordinate job="xenon_fighter_escort_daevoxen_large" assignment="attack" group="3"/>
+		</subordinates>
+	</job>
+	<job id="xenon_destroyer_escort_daevoxen_large" name="{4816310,302}" startactive="false">
+		<orders>
+			<order order="Escort" default="true">
+				<param name="formation" value="formationshape.invvshape"/>
+				<param name="overrideformationskill" value="true"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[military, destroyer]" size="ship_xl"/>
+		<quota wing="5"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro"/>
+		<environment buildatshipyard="true"/>
+		<modifiers subordinate="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, destroyer]" size="ship_xl"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+	</job>
+	<job id="xenon_frigate_escort_daevoxen_large" name="{4816310,302}" startactive="false">
+		<orders>
+			<order order="Escort" default="true">
+				<param name="formation" value="formationshape.dartvertical"/>
+				<param name="overrideformationskill" value="true"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[military]" size="ship_m"/>
+		<quota wing="15"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro"/>
+		<environment buildatshipyard="true"/>
+		<modifiers subordinate="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, medium]" size="ship_m"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+	</job>
+	<job id="xenon_fighter_escort_daevoxen_large" name="{4816310,302}" startactive="false">
+		<orders>
+			<order order="Escort" default="true">
+				<param name="overrideformationskill" value="true"/>
+			</order>
+		</orders>
+		<category faction="xenon" tags="[military, fighter]" size="ship_s"/>
+		<quota wing="30"/>
+		<location class="galaxy" macro="xu_ep2_universe_macro"/>
+		<environment buildatshipyard="true"/>
+		<modifiers subordinate="true"/>
+		<ship>
+			<select faction="xenon" tags="[military, fighter, selection]" size="ship_s"/>
+			<owner exact="xenon" overridenpc="true"/>
+		</ship>
+	</job>
+</add>
+</diff>

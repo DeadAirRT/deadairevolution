@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language>
+	<page id="4816310" title="DeadAir Evolution T Files" descr="used in DeadAir Evolution" voice="no">
+		<t id="100">DA Evolution Menu</t>
+		<t id="200">Enable DA Evolution</t>
+		<t id="201">Changes whether the Evolution script will continue to run. Disabling does not revert ships already upgraded.</t>
+		<t id="202">DA Evolution Interval</t>
+		<t id="203">Changes the time \(in minutes\) between evolution level increases. Has no effect if DA Evolution disabled or already at max level. First iteration will only occur after 4 hours of the mod being enabled on save. Default = 120 minutes</t>
+		<t id="204">DA Evolution Current Level / Max Level</t>
+		<t id="205">Shows the current progress level of DA Evolution.</t>
+		<t id="206">Enable DA Evolution Xenon Fleets</t>
+		<t id="207">Changes whether additional ships are built by xenon.</t>
+		<t id="208">Maximum Xenon Fleets Added</t>
+		<t id="209">Changes the maximum number of Xenon fleets that will be ordered built by Xenon from this mod. Default = 10 fleets</t>
+		<t id="210">Xenon Fleet Size</t>
+		<t id="211">Size of the Xenon fleets added by DA Evolution. This will only affect future fleets built. Default = Medium</t>
+		<t id="212">Small</t>
+		<t id="213">1XL - 1XL Escort - 3M Escort - 6S Escort</t>
+		<t id="214">Medium</t>
+		<t id="215">1XL - 3XL Escort - 9M Escort - 18S Escort</t>
+		<t id="216">Large</t>
+		<t id="217">1XL - 5XL Escort - 15M Escort - 30S Escort</t>
+		<t id="300">Branch 9 Evolution</t>
+		<t id="301">{4816310,300} {1001,1112}</t>
+		<t id="302">{4816310,300} {1001,7817}</t>
+	</page>
+</language>

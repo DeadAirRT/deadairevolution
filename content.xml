@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<content id="DeadAirEvolution" name="DeadAir Evolution" description="" author="DeadAir" version="001" date="2022-05-06" save="0" sync="false">
+<content id="DeadAirEvolution" name="DeadAir Evolution" description="" author="DeadAir" version="600" date="2023-05-27" save="0" sync="false">
   <dependency id="ego_dlc_split" optional="true" name="Split Vendetta" />
   <dependency id="ego_dlc_terran" optional="true" name="Cradle of Humanity" />
   <dependency id="ego_dlc_pirate" optional="true" name="Tides of Avarice"/>
+  <dependency id="ego_dlc_boron" optional="true" name="Fish People"/>
+  <dependency id="ws_2042901274" optional="false" name="SirNukes Mod Support APIs" />
   <text language="7" name="DeadAir Evolution" description="" author="DeadAir"/>
   <text language="33" name="DeadAir Evolution" description="" author="DeadAir"/>
   <text language="34" name="DeadAir Evolution" description="" author="DeadAir"/>
