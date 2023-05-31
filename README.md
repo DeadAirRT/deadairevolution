@@ -16,7 +16,7 @@
 - Radar range (eco): Min +5% -- Max: +25%
 - Radar signature (eco): Min -10% -- Max: -50%
 
-##Adds adjustable increased Xenon fleet numbers and sizes.
+## Adds adjustable increased Xenon fleet numbers and sizes.
 - Can enable/disable the building of additional Xenon Fleets
 - Allows user to adjust on the fly number of additional fleets in game
 - Allows user to adjust size of additional xenon fleets (affects future fleets, not past)
